@@ -5,7 +5,9 @@ import cors from "cors";
 import { PORT } from "./env.js";
 import helmet from "helmet";
 import morgan from "morgan";
+import multer from "multer";
 import type { ErrorRequestHandler } from "express";
+import { enqueuePrintJob, getPrintStatus } from "./queue.js";
 
 const debug = Debug("myapp");
 const app = express();
@@ -24,6 +26,34 @@ app.use(express.json());
 
 // Serving built frontend
 app.use(express.static("public"));
+
+// Multer setup for handling multipart/form-data (file uploads)
+const storage = multer.memoryStorage();
+const print = multer({ storage: storage });
+
+app.post("/api/print", print.single("image"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded." });
+  }
+  debug(
+    `Received print request with file: ${req.file.originalname}, size: ${req.file.size} bytes`
+  );
+
+  await enqueuePrintJob(async () => {
+    // Simulate print job processing
+    debug(
+      `Processing print job for file: ${req.file?.originalname}, size: ${req.file?.size} bytes`
+    );
+    await new Promise((resolve) => setTimeout(resolve, 10000)); // Simulate delay
+    debug(`Print job completed for file: ${req.file?.originalname}`);
+  });
+
+  res.status(200).json({ message: "Print request received successfully." });
+});
+
+app.get("/api/queue", (req, res) => {
+  res.status(200).json(getPrintStatus());
+});
 
 // Catch all endpoints
 app.use(async (req, res, next) => {

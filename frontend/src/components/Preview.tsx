@@ -171,26 +171,45 @@ function PrintButton({ previewRef }: Props) {
   const [printing, setPrinting] = useState(false);
 
   const handlePrint = async () => {
-    try {
-      setPrinting(true);
-      const canvasRef = previewRef.current;
-      if (!canvasRef) return;
-      const dataUrl = canvasRef.toDataURL("image/png");
-      const res = await fetch("/api/print", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          dataUrl: dataUrl,
-        }),
-      });
-      if (!res.ok) {
-        const text = await res.text();
-        console.error("Print request failed:", text);
+    setPrinting(true);
+    const canvasRef = previewRef.current;
+    if (!canvasRef) return;
+
+    canvasRef.toBlob((blob) => {
+      const formData = new FormData();
+      if (blob) {
+        formData.append("image", blob, "image.png");
+
+        fetch("/api/print", {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => {
+            if (!res.ok) {
+              console.error("Print request failed");
+            }
+          })
+          .catch((err) => {
+            console.error("Print request error:", err);
+          })
+          .finally(() => {
+            setPrinting(false);
+          });
       }
-    } catch (err: any) {
-    } finally {
-      setPrinting(false);
-    }
+    }, "image/png");
+
+    // const dataUrl = canvasRef.toDataURL("image/png");
+    // const res = await fetch("/api/print", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({
+    //     dataUrl: dataUrl,
+    //   }),
+    // });
+    // if (!res.ok) {
+    //   const text = await res.text();
+    //   console.error("Print request failed:", text);
+    // }
   };
 
   return (
