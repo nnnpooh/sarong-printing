@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from "react-router";
-import { NavLink } from "react-router";
+import { NavLink, useLocation } from "react-router";
 import { curPatternAtom, drawingDataAtom } from "../utils/atoms";
 import { useAtom } from "jotai";
 
@@ -7,6 +7,7 @@ function Layout() {
   const [curPattern, setCurPattern] = useAtom(curPatternAtom);
   const [canvasData, setCanvasData] = useAtom(drawingDataAtom);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleReset = () => {
     setCurPattern(null);
@@ -14,21 +15,26 @@ function Layout() {
     navigate("/");
   };
 
+  const title =
+    location.pathname === "/draw"
+      ? "Draw Your Artwork"
+      : location.pathname === "/preview"
+      ? "Preview Your Phasin"
+      : "Choose a Phasin Pattern";
+
   return (
     <>
       <nav className="fixed top-0 left-0 z-10 w-full border-b border-white/50 bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between p-4">
-          <div className="text-3xl font-bold text-gray-800">
-            Sarong Designer
-          </div>
+          <div className="text-3xl font-bold text-gray-800">{title}</div>
           <div className="flex items-center gap-4">
             <ul className="flex flex-wrap gap-3">
               <li>
-                <NavLinkWrapper to="/">Choose</NavLinkWrapper>
+                <NavLinkWrapper to="/">1. Choose</NavLinkWrapper>
               </li>
               <li>
                 <NavLinkWrapper to="/draw" disabled={!curPattern}>
-                  Draw
+                  2. Draw
                 </NavLinkWrapper>
               </li>
               <li>
@@ -36,7 +42,7 @@ function Layout() {
                   to="/preview"
                   disabled={!canvasData || !curPattern}
                 >
-                  Preview
+                  3. Preview
                 </NavLinkWrapper>
               </li>
             </ul>
