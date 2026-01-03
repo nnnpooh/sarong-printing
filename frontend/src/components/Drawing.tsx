@@ -1,6 +1,7 @@
-import { useRef, useEffect } from "react";
 import { useAtom } from "jotai";
+import { useEffect, useRef } from "react";
 import { drawingDataAtom } from "../utils/atoms";
+
 interface Point {
   x: number;
   y: number;

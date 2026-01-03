@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
+import { useEffect, useState } from "react";
 import { curPatternAtom, patternAtom } from "../utils/atoms";
-import { useState, useEffect } from "react";
 import { type Pattern } from "../utils/types";
 
 const initialPatterns: Pattern[] = [

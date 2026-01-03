@@ -1,6 +1,7 @@
 import { useAtom } from "jotai";
-import { curPatternAtom, drawingDataAtom } from "../utils/atoms";
 import { useEffect, useRef, useState } from "react";
+import usePrinter from "../hooks/usePrinter";
+import { curPatternAtom, drawingDataAtom } from "../utils/atoms";
 
 function Preview() {
   const [curPattern] = useAtom(curPatternAtom);
@@ -157,6 +158,7 @@ function Preview() {
         }}
       />
       <PrintButton previewRef={previewRef} />
+      <PrinterStatusBar />
     </div>
   );
 }
@@ -246,5 +248,23 @@ function PrintButton({ previewRef }: Props) {
         <>Print</>
       )}
     </button>
+  );
+}
+
+function PrinterStatusBar() {
+  const { printStatus, isLoading, error } = usePrinter();
+  console.log("Printer status:", { printStatus, isLoading, error });
+  return (
+    <div>
+      {printStatus ? (
+        <div>
+          <span>Printer: {printStatus.isPrinting ? "Printing" : "Idle"}</span>
+          {" | "}
+          <span>Queue Length: {printStatus.queueLength}</span>
+        </div>
+      ) : (
+        <div>Loading...</div>
+      )}
+    </div>
   );
 }

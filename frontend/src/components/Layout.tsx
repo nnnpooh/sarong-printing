@@ -1,7 +1,6 @@
-import { Outlet, useNavigate } from "react-router";
-import { NavLink, useLocation } from "react-router";
-import { curPatternAtom, drawingDataAtom } from "../utils/atoms";
 import { useAtom } from "jotai";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router";
+import { curPatternAtom, drawingDataAtom } from "../utils/atoms";
 
 function Layout() {
   const [curPattern, setCurPattern] = useAtom(curPatternAtom);
@@ -19,8 +18,8 @@ function Layout() {
     location.pathname === "/draw"
       ? "Draw Your Artwork"
       : location.pathname === "/preview"
-      ? "Preview Your Phasin"
-      : "Choose a Phasin Pattern";
+        ? "Preview Your Phasin"
+        : "Choose a Phasin Pattern";
 
   return (
     <>
