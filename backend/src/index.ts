@@ -45,7 +45,7 @@ app.post("/api/print", print.single("image"), async (req, res) => {
     return res.status(400).json({ message: "No file uploaded." });
   }
 
-  await enqueuePrintJob(() => createPrintJob(req.file));
+  await enqueuePrintJob(createPrintJob(req.file));
 
   res.status(200).json({ message: "Print request received successfully." });
 });

@@ -22,23 +22,23 @@ export function optimizeImage(buffer: Buffer) {
   return optimizedBuffer;
 }
 
-export async function createPrintJob(
-  file?: Express.Multer.File
-): Promise<void> {
-  if (!file) {
-    throw new Error("No file provided for print job.");
-  }
-  debug(
-    `Processing print job for file: ${file.originalname}, size: ${file.size} bytes`
-  );
+export function createPrintJob(file?: Express.Multer.File) {
+  return async () => {
+    if (!file) {
+      throw new Error("No file provided for print job.");
+    }
+    debug(
+      `Processing print job for file: ${file.originalname}, size: ${file.size} bytes`
+    );
 
-  const optimizedImage = await optimizeImage(file.buffer);
+    const optimizedImage = await optimizeImage(file.buffer);
 
-  // Save to file for debugging purposes
-  await sharp(optimizedImage).toFile(`temp/printed_${Date.now()}_.png`);
+    // Save to file for debugging purposes
+    await sharp(optimizedImage).toFile(`temp/printed_${Date.now()}_.png`);
 
-  // Simulate print job processing
-  await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulate delay
+    // Simulate print job processing
+    await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulate delay
 
-  debug(`Print job completed for file: ${file.originalname}`);
+    debug(`Print job completed for file: ${file.originalname}`);
+  };
 }
