@@ -1,12 +1,17 @@
 import { useAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import usePrinter from "../hooks/usePrinter";
-import { curPatternAtom, drawingDataAtom } from "../utils/atoms";
+import {
+  curPatternAtom,
+  drawingDataAtom,
+  isModalOpenAtom,
+} from "../utils/atoms";
 
 function Preview() {
   const [curPattern] = useAtom(curPatternAtom);
   const [canvasData] = useAtom(drawingDataAtom);
   const previewRef = useRef<HTMLCanvasElement | null>(null);
+  const [isModalOpen, setIsModalOpen] = useAtom(isModalOpenAtom);
 
   const getPatternImage = async (): Promise<HTMLImageElement | null> => {
     if (!curPattern) return null;
@@ -159,21 +164,24 @@ function Preview() {
       />
       <PrintButton previewRef={previewRef} />
       <PrinterStatusBar />
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
 
 export default Preview;
 
-interface Props {
+interface PropsPrintButton {
   previewRef: React.RefObject<HTMLCanvasElement | null>;
 }
 
-function PrintButton({ previewRef }: Props) {
+function PrintButton({ previewRef }: PropsPrintButton) {
   const [printing, setPrinting] = useState(false);
+  const [_, setIsModalOpen] = useAtom(isModalOpenAtom);
 
   const handlePrint = async () => {
     setPrinting(true);
+    setIsModalOpen(true);
     const canvasRef = previewRef.current;
     if (!canvasRef) return;
 
@@ -218,7 +226,7 @@ function PrintButton({ previewRef }: Props) {
     <button
       onClick={handlePrint}
       disabled={printing}
-      className="fixed bottom-8 right-8 z-20 inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-3 text-md font-bold text-white shadow-2xl shadow-green-400/50 transition-all duration-300 hover:shadow-green-500/70 hover:scale-110 active:scale-100 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+      className="fixed bottom-8 right-8 z-20 inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-3 text-md font-bold text-white shadow-2xl shadow-green-400/50 transition-all duration-300 hover:shadow-green-500/70 hover:scale-110 active:scale-100 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 z-100"
     >
       {printing ? (
         <>
@@ -261,7 +269,7 @@ function PrinterStatusBar() {
     : "Unavailable";
 
   return (
-    <div className="fixed left-6 bottom-6 z-30">
+    <div className="fixed left-6 bottom-6 z-100">
       <div className="flex items-center gap-3 rounded-full bg-white/90 backdrop-blur px-4 py-2 shadow-lg border border-gray-200">
         <div className="flex items-center gap-2">
           {isLoading ? (
@@ -310,6 +318,54 @@ function PrinterStatusBar() {
           {String((error as any)?.message ?? error)}
         </div>
       )}
+    </div>
+  );
+}
+
+interface PropsModal {
+  isOpen: boolean;
+  onClose: () => void;
+}
+function Modal({ isOpen, onClose }: PropsModal) {
+  if (!isOpen) return null;
+  return (
+    <div
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+      onClick={onClose} // Close modal when clicking outside
+    >
+      {/* Modal content container */}
+      <div
+        className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full m-4"
+        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+      >
+        {/* Header with close button */}
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="text-2xl font-bold text-gray-800">Payment (Mocked)</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition duration-150 text-3xl leading-none"
+          >
+            &times;
+          </button>
+        </div>
+
+        {/* Payment instructions */}
+        <div className="mb-3 flex gap-2 items-end justify-center ">
+          <span className="text-gray-600">Scan QR code to pay</span>
+          <span className="text-2xl font-bold text-green-600">฿400</span>
+        </div>
+
+        {/* QR Code */}
+        <div className="flex justify-center mb-3">
+          <div className="bg-white p-2 rounded-lg border-2 border-gray-200">
+            <img
+              src="/img/qr.png"
+              alt="Payment QR Code"
+              className="w-30 h-30 object-contain"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
