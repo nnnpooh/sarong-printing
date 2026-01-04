@@ -16,6 +16,18 @@ const initialPatterns: Pattern[] = [
     thumbnailUrl: "/img/p2.jpg",
     imageUrl: "/img/p2.jpg",
   },
+  {
+    id: "pattern3",
+    name: "Pattern 3",
+    thumbnailUrl: "/img/p3.jpg",
+    imageUrl: "/img/p3.jpg",
+  },
+  {
+    id: "pattern4",
+    name: "Pattern 4",
+    thumbnailUrl: "/img/p4.jpg",
+    imageUrl: "/img/p4.jpg",
+  }
 ];
 
 function PatternSelector() {
