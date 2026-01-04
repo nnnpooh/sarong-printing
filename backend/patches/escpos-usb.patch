@@ -1,0 +1,22 @@
+diff --git a/index.js b/index.js
+index 8c21546ef075ee217cbc393f646421010036e414..e5cbf7ad4404f2015aac9fe10eaf2232aba61f04 100644
+--- a/index.js
++++ b/index.js
+@@ -67,7 +67,16 @@ function USB(vid, pid){
+  */
+ USB.findPrinter = function(){
+   if (!usb) {
+-    usb = require('usb');
++    const _usb = require('usb');
++    if (_usb && typeof _usb.on === 'function') {
++      usb = _usb;
++    } else if (_usb && _usb.usb && typeof _usb.usb.on === 'function') {
++      usb = _usb.usb;
++    } else if (_usb && _usb.default && typeof _usb.default.on === 'function') {
++      usb = _usb.default;
++    } else {
++      usb = _usb;
++    }
+   }
+   return usb.getDeviceList().filter(function(device){
+     try{

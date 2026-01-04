@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  escpos-usb:
+    hash: ff792b00dfbdb294259ab14843588a8b834db3c3f2f2193ecce811aa9ece74b5
+    path: patches/escpos-usb.patch
+
 importers:
 
   .:
@@ -22,7 +27,7 @@ importers:
         version: 3.0.0-alpha.6
       escpos-usb:
         specifier: 3.0.0-alpha.4
-        version: 3.0.0-alpha.4
+        version: 3.0.0-alpha.4(patch_hash=ff792b00dfbdb294259ab14843588a8b834db3c3f2f2193ecce811aa9ece74b5)
       express:
         specifier: ^5.2.1
         version: 5.2.1
@@ -1748,7 +1753,7 @@ snapshots:
 
   escape-html@1.0.3: {}
 
-  escpos-usb@3.0.0-alpha.4:
+  escpos-usb@3.0.0-alpha.4(patch_hash=ff792b00dfbdb294259ab14843588a8b834db3c3f2f2193ecce811aa9ece74b5):
     dependencies:
       usb: 2.16.0
 

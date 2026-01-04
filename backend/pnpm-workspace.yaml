@@ -2,3 +2,6 @@ onlyBuiltDependencies:
   - esbuild
   - sharp
   - usb
+
+patchedDependencies:
+  escpos-usb: patches/escpos-usb.patch
